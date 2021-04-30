@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dinghao.pms.mapper.PmsPatientMapper">
+    
+    <resultMap type="com.dinghao.pms.domain.PmsPatient" id="PmsPatientResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="dateOfBirth"    column="date_of_birth"    />
+        <result property="identificationNo"    column="identification_no"    />
+        <result property="homeAddress"    column="home_address"    />
+        <result property="phoneNo"    column="phone_no"    />
+        <result property="gender"    column="gender"    />
+        <result property="medicalRecordNo"    column="medical_record_no"    />
+        <result property="patientAgeStr"    column="patient_age_str"    />
+    </resultMap>
+
+    <sql id="selectPmsPatientVo">
+        select id, name, date_of_birth, identification_no, home_address, phone_no, gender, medical_record_no, patient_age_str from pms_patient
+    </sql>
+
+    <select id="selectPmsPatientList" parameterType="PmsPatient" resultMap="PmsPatientResult">
+        <include refid="selectPmsPatientVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="dateOfBirth != null "> and date_of_birth = #{dateOfBirth}</if>
+            <if test="identificationNo != null  and identificationNo != ''"> and identification_no = #{identificationNo}</if>
+            <if test="homeAddress != null  and homeAddress != ''"> and home_address = #{homeAddress}</if>
+            <if test="phoneNo != null  and phoneNo != ''"> and phone_no = #{phoneNo}</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="medicalRecordNo != null  and medicalRecordNo != ''"> and medical_record_no = #{medicalRecordNo}</if>
+            <if test="patientAgeStr != null  and patientAgeStr != ''"> and patient_age_str = #{patientAgeStr}</if>
+        </where>
+    </select>
+    
+    <select id="selectPmsPatientById" parameterType="Long" resultMap="PmsPatientResult">
+        <include refid="selectPmsPatientVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPmsPatient" parameterType="PmsPatient" useGeneratedKeys="true" keyProperty="id">
+        insert into pms_patient
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="dateOfBirth != null">date_of_birth,</if>
+            <if test="identificationNo != null and identificationNo != ''">identification_no,</if>
+            <if test="homeAddress != null">home_address,</if>
+            <if test="phoneNo != null and phoneNo != ''">phone_no,</if>
+            <if test="gender != null">gender,</if>
+            <if test="medicalRecordNo != null">medical_record_no,</if>
+            <if test="patientAgeStr != null">patient_age_str,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="dateOfBirth != null">#{dateOfBirth},</if>
+            <if test="identificationNo != null and identificationNo != ''">#{identificationNo},</if>
+            <if test="homeAddress != null">#{homeAddress},</if>
+            <if test="phoneNo != null and phoneNo != ''">#{phoneNo},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="medicalRecordNo != null">#{medicalRecordNo},</if>
+            <if test="patientAgeStr != null">#{patientAgeStr},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePmsPatient" parameterType="PmsPatient">
+        update pms_patient
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="dateOfBirth != null">date_of_birth = #{dateOfBirth},</if>
+            <if test="identificationNo != null and identificationNo != ''">identification_no = #{identificationNo},</if>
+            <if test="homeAddress != null">home_address = #{homeAddress},</if>
+            <if test="phoneNo != null and phoneNo != ''">phone_no = #{phoneNo},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="medicalRecordNo != null">medical_record_no = #{medicalRecordNo},</if>
+            <if test="patientAgeStr != null">patient_age_str = #{patientAgeStr},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePmsPatientById" parameterType="Long">
+        delete from pms_patient where id = #{id}
+    </delete>
+
+    <delete id="deletePmsPatientByIds" parameterType="String">
+        delete from pms_patient where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

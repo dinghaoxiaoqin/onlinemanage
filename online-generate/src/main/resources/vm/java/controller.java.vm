@@ -1,0 +1,205 @@
+package ${packageName}.controller;
+
+import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import io.swagger.annotations.*;
+//com.yyaccp.hncc.common模块的包引入
+import com.yyaccp.hncc.common.vo.${moduleName}.${ClassName}VO;
+import com.yyaccp.hncc.common.util.BeanCopierUtil;
+
+#if($table.crud)
+import com.ruoyi.common.core.page.TableDataInfo;
+#elseif($table.tree)
+#end
+
+/**
+ * ${functionName}Controller
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Api(tags = "${functionName}")
+@RestController
+@RequestMapping("/${moduleName}/${businessName}")
+public class ${ClassName}Controller extends BaseController {
+    @Autowired
+    private I${ClassName}Service ${className}Service;
+
+/**
+ * 查询${functionName}列表
+ *
+ */
+@PreAuthorize("@ss.hasPermi('${permissionPrefix}:list')")
+@GetMapping("/list")
+@ApiOperation(value = "查询${functionName}" , notes = "查询所有${functionName}" ,
+        code = 200, produces = "application/json" , protocols = "Http" ,
+        response = TableDataInfo.class, httpMethod = "GET")
+@ApiResponses({
+        @ApiResponse(code = 204, message = "操作已经执行成功，但是没有返回数据"),
+        @ApiResponse(code = 303, message = "重定向"),
+        @ApiResponse(code = 400, message = "参数列表错误（缺少，格式不匹配）"),
+        @ApiResponse(code = 500, message = "系统内部错误"),
+        @ApiResponse(code = 404, message = "资源，服务未找到"),
+        @ApiResponse(code = 200, message = "操作成功"),
+        @ApiResponse(code = 401, message = "未授权"),
+        @ApiResponse(code = 403, message = "访问受限，授权过期")
+})
+@ApiParam(name = "${ClassName}VO对象" , type = "${ClassName}VO")
+    #if($table.crud)
+    public TableDataInfo list(${ClassName}VO ${className}VO) {
+        //将Vo转化为实体
+        ${ClassName} ${className}=BeanCopierUtil.copy(${className}VO,${ClassName}. class);
+        startPage();
+        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        TableDataInfo tableDataInfo = getDataTable(list);
+        //替换集合
+        tableDataInfo.setRows(BeanCopierUtil.copy(tableDataInfo.getRows(), ${ClassName}VO.class));
+        return tableDataInfo;
+    }
+    #elseif($table.tree)
+        public AjaxResult list(${ClassName} ${className}) {
+            List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+            return AjaxResult.success(list);
+        }
+    #end
+
+    /**
+     * 导出${functionName}列表
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:export')")
+    @Log(title = "${functionName}" , businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    @ApiOperation(value = "导出${functionName}表" , notes = "导出所有${functionName}" ,
+            code = 200, produces = "application/json" , protocols = "Http" ,
+            response = TableDataInfo.class, httpMethod = "GET")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "操作已经执行成功，但是没有返回数据"),
+            @ApiResponse(code = 303, message = "重定向"),
+            @ApiResponse(code = 400, message = "参数列表错误（缺少，格式不匹配）"),
+            @ApiResponse(code = 500, message = "系统内部错误"),
+            @ApiResponse(code = 404, message = "资源，服务未找到"),
+            @ApiResponse(code = 200, message = "操作成功"),
+            @ApiResponse(code = 401, message = "未授权"),
+            @ApiResponse(code = 403, message = "访问受限，授权过期")
+    })
+    @ApiParam(name = "${ClassName}VO对象" , type = "${ClassName}VO")
+    public AjaxResult export(${ClassName}VO ${className}VO) {
+        //将VO转化为实体
+        ${ClassName} ${className}=BeanCopierUtil.copy(${className}VO,${ClassName}. class);
+        List<${ClassName}VO> list = BeanCopierUtil.copy(${className}Service.select${ClassName}List(${className}),${ClassName}VO.class);
+        ExcelUtil<${ClassName}VO> util = new ExcelUtil<${ClassName}VO>(${ClassName}VO.class);
+        return util.exportExcel(list, "${businessName}");
+    }
+
+    /**
+     * 获取${functionName}详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:query')")
+    @GetMapping(value = "/{${pkColumn.javaField}}")
+    @ApiOperation(value = "获取${functionName}详细信息" ,
+            notes = "根据${functionName}${pkColumn.javaField}获取科室信息" , code = 200,
+            produces = "application/json" , protocols = "Http" , response = AjaxResult.class,
+            httpMethod = "GET")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "操作已经执行成功，但是没有返回数据"),
+            @ApiResponse(code = 303, message = "重定向"),
+            @ApiResponse(code = 400, message = "参数列表错误（缺少，格式不匹配）"),
+            @ApiResponse(code = 500, message = "系统内部错误"),
+            @ApiResponse(code = 404, message = "资源，服务未找到"),
+            @ApiResponse(code = 200, message = "操作成功"),
+            @ApiResponse(code = 401, message = "未授权"),
+            @ApiResponse(code = 403, message = "访问受限，授权过期")
+    })
+    @ApiParam(name = "${className}.id" , type = "Long")
+    public AjaxResult getInfo(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return AjaxResult.success(BeanCopierUtil.copy(${className}Service.select${ClassName}ById(${pkColumn.javaField}),${ClassName}VO.class));
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:add')")
+    @Log(title = "新增${functionName}" , businessType = BusinessType.INSERT)
+    @PostMapping
+    @ApiOperation(value = "新增${functionName}信息" , notes = "新增${functionName}信息" , code = 200,
+            produces = "application/json" , protocols = "Http" , response = AjaxResult.class,
+            httpMethod = "POST")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "操作已经执行成功，但是没有返回数据"),
+            @ApiResponse(code = 303, message = "重定向"),
+            @ApiResponse(code = 400, message = "参数列表错误（缺少，格式不匹配）"),
+            @ApiResponse(code = 500, message = "系统内部错误"),
+            @ApiResponse(code = 404, message = "资源，服务未找到"),
+            @ApiResponse(code = 200, message = "操作成功"),
+            @ApiResponse(code = 401, message = "未授权"),
+            @ApiResponse(code = 403, message = "访问受限，授权过期")
+    })
+    @ApiParam(name = "${ClassName}VO对象" , type = "${ClassName}VO")
+    public AjaxResult add(@RequestBody ${ClassName}VO ${className}VO) {
+        return toAjax(${className}Service.insert${ClassName}(BeanCopierUtil.copy(${className}VO,${ClassName}. class)));
+    }
+
+    /**
+     * 修改${functionName}
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:edit')")
+    @Log(title = "${functionName}" , businessType = BusinessType.UPDATE)
+    @PutMapping
+    @ApiOperation(value = "修改${functionName}信息" , notes = "修改${functionName}信息" , code = 200,
+            produces = "application/json" , protocols = "Http" , response = AjaxResult.class,
+            httpMethod = "PUT")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "操作已经执行成功，但是没有返回数据"),
+            @ApiResponse(code = 303, message = "重定向"),
+            @ApiResponse(code = 400, message = "参数列表错误（缺少，格式不匹配）"),
+            @ApiResponse(code = 500, message = "系统内部错误"),
+            @ApiResponse(code = 404, message = "资源，服务未找到"),
+            @ApiResponse(code = 200, message = "操作成功"),
+            @ApiResponse(code = 401, message = "未授权"),
+            @ApiResponse(code = 403, message = "访问受限，授权过期")
+    })
+    @ApiParam(name = "${ClassName}VO对象" , type = "${ClassName}VO")
+    public AjaxResult edit(@RequestBody ${ClassName}VO ${className}VO) {
+        return toAjax(${className}Service.update${ClassName}(BeanCopierUtil.copy(${className}VO,${ClassName}. class)));
+    }
+
+    /**
+     * 删除${functionName}
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:remove')")
+    @Log(title = "${functionName}" , businessType = BusinessType.DELETE)
+    @DeleteMapping("/{${pkColumn.javaField}s}")
+    @ApiOperation(value = "删除${functionName}信息" , notes = "删除${functionName}信息" , code = 200,
+            produces = "application/json" , protocols = "Http" , response = AjaxResult.class,
+            httpMethod = "DELETE")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "操作已经执行成功，但是没有返回数据"),
+            @ApiResponse(code = 303, message = "重定向"),
+            @ApiResponse(code = 400, message = "参数列表错误（缺少，格式不匹配）"),
+            @ApiResponse(code = 500, message = "系统内部错误"),
+            @ApiResponse(code = 404, message = "资源，服务未找到"),
+            @ApiResponse(code = 200, message = "操作成功"),
+            @ApiResponse(code = 401, message = "未授权"),
+            @ApiResponse(code = 403, message = "访问受限，授权过期")
+    })
+    @ApiParam(name = "${className}.id" , type = "Long[]")
+    public AjaxResult remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+        return toAjax(${className}Service.delete${ClassName}ByIds(${pkColumn.javaField}s));
+    }
+}
