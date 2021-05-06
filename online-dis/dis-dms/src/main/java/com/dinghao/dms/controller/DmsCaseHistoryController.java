@@ -109,6 +109,8 @@ public class DmsCaseHistoryController extends BaseController {
             @ApiResponse(code = 401, message = "未授权"),
             @ApiResponse(code = 403, message = "访问受限，授权过期")
     })
+
+
     @ApiParam(name = "dmsCaseHistory.id" , type = "Long")
     public ResultBody getInfo(@PathVariable("id") Long id) {
         return ResultBody.success(BeanCopierUtil.copy(dmsCaseHistoryService.selectDmsCaseHistoryById(id),DmsCaseHistoryVO.class));
