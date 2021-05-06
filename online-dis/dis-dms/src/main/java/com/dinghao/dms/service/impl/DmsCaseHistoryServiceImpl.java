@@ -43,6 +43,7 @@ public class DmsCaseHistoryServiceImpl implements IDmsCaseHistoryService
     @Override
     public List<DmsCaseHistory> selectDmsCaseHistoryList(DmsCaseHistory dmsCaseHistory)
     {
+        //获取数据
         return dmsCaseHistoryMapper.selectDmsCaseHistoryList(dmsCaseHistory);
     }
 
