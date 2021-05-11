@@ -17,8 +17,21 @@ node {
      checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: "${git_auth}", url: "${git_url}"]]])
   }
 
-stage('编译 安装'){
-   sh "mvn -f clean install"
+stage('编译 安装 公共模块'){
+   sh "mvn -f online-common clean install"
+  }
+  
+ stage('编译 安装 服务模块'){
+   echo "编译 核心模块"
+   sh "mvn -f online-core clean install"
+   echo "编译 security模块"
+   sh "mvn -f online-security clean install"
+   echo "编译 系统模块"
+   sh "mvn -f online-system clean install"
+   echo "编译 generate模块"
+   sh "mvn -f online-generate clean install"
+   echo "编译 业务dis模块"
+   sh "mvn -f online-dis clean install"
   }
 
 }
