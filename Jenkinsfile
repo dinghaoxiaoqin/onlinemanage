@@ -17,4 +17,8 @@ node {
      checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: "${git_auth}", url: "${git_url}"]]])
   }
 
+stage('编译 安装'){
+   sh "mvn -f online-manage clean install"
+  }
+
 }
