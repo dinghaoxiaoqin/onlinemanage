@@ -1,7 +1,7 @@
 //git 凭证id
 def git_auth = "96b91bf1-3f92-4e18-94a6-d473504ac188"
 //git的url地址
-def git_url = "https://github.com/dinghaoxiaoqin/onlinemanage.git"
+def git_url = "git@github.com:dinghaoxiaoqin/onlinemanage.git"
 //镜像的版本号
 def tag = "latest"
 //阿里云镜像仓库地址
