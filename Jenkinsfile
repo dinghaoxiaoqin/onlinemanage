@@ -18,7 +18,7 @@ node {
   }
 
 stage('编译 安装'){
-   sh "mvn -f online-manage clean install"
+   sh "mvn -f clean install"
   }
 
 }
