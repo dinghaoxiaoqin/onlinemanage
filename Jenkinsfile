@@ -35,8 +35,8 @@ stage('编译 安装 公共模块'){
    echo "编译 业务dis模块"
    sh "mvn -f online-dis clean install"
 
-   echo "编译 security模块"
-   sh "mvn -f online-security clean install"
+   echo "编译 打包 security模块"
+   sh "mvn -f online-security clean package dockerfile:build"
   }
 
 }
