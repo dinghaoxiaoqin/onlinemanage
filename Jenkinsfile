@@ -22,17 +22,21 @@ stage('编译 安装 公共模块'){
   }
   
  stage('编译 安装 服务模块'){
+
    echo "编译 系统模块"
    sh "mvn -f online-system clean install"
+
    echo "编译 核心模块"
    sh "mvn -f online-core clean install"
-   echo "编译 security模块"
-   sh "mvn -f online-security clean install"
 
    echo "编译 generate模块"
    sh "mvn -f online-generate clean install"
+
    echo "编译 业务dis模块"
    sh "mvn -f online-dis clean install"
+
+   echo "编译 security模块"
+   sh "mvn -f online-security clean install"
   }
 
 }
