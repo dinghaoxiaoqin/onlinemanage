@@ -21,7 +21,7 @@ stage('编译 安装 公共模块'){
    sh "mvn -f online-common clean install"
   }
   
- stage('编译 安装 服务模块'){
+ stage('编译 安装 子模块'){
 
    echo "编译 系统模块"
    sh "mvn -f online-system clean install"
@@ -34,9 +34,23 @@ stage('编译 安装 公共模块'){
 
    echo "编译 业务dis模块"
    sh "mvn -f online-dis clean install"
+  }
 
-   echo "编译 打包 security模块"
-   sh "mvn -f online-security clean package dockerfile:build"
+
+  stage('编译 打包'){
+     echo "查询镜像Id是否存在"
+
+     if(currentBuild.result == null || currentBuild.result == 'SUCCESS'){
+
+      echo "删除镜像成功111111111"
+     sh 'ansible ciserver -a "docker rm -f online-security"'
+       echo "删除镜像成功"
+     }
+
+      echo "编译 打包"
+     sh "mvn -f online-security clean package dockerfile:build"
+
+
   }
 
 }
