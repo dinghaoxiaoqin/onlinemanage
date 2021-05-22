@@ -36,20 +36,35 @@ stage('编译 安装 公共模块'){
    sh "mvn -f online-dis clean install"
   }
 
-
   stage('编译 打包'){
-     echo "查询镜像Id是否存在"
 
-     if(currentBuild.result == null || currentBuild.result == 'SUCCESS'){
-
-      echo "删除镜像成功111111111"
-     sh 'ansible ciserver -a "docker rm -f online-security"'
-       echo "删除镜像成功"
-     }
-
-      echo "编译 打包"
+     echo "编译 打包"
      sh "mvn -f online-security clean package dockerfile:build"
+  }
 
+  //上传镜像到阿里云
+  stage('上传镜像'){
+   def name = "online-security"
+   def imageName = ""
+   echo "${online-security}:${tag}"
+   imageName = name+":${tag}"
+
+    //定义镜像的名字
+   sh "docker tag ${imageName} ${aliyun_url}/${aliyun_project}/${imageName}"
+
+    //推送镜像到阿里云
+    withCredentials([usernamePassword(credentialsId: "${aliyun_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+
+    //登录阿里云
+    sh "docker login -u ${username} -p ${password} registry.cn-hangzhou.aliyuncs.com"
+
+    //镜像上传到阿里云仓库
+    sh "docker push ${aliyun_url}/${aliyun_project}/${imageName}"
+
+    sh "echo 镜像上传成功"
+           }
+    //服务部署
+    sshPublisher(publishers: [sshPublisherDesc(configName: "master_192.168.81.100", transfers: [sshTransfer(cleanRemote: false, excludes: "", execCommand: "/opt/jenkins_shell/deploy.sh $aliyun_url $aliyun_project $boot_name $tag $port", execTimeout: 960000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: "[, ]+", remoteDirectory: "", remoteDirectorySDF: false, removePrefix: "", sourceFiles: "")], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 
   }
 
