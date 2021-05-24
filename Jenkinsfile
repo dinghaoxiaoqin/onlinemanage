@@ -5,7 +5,7 @@ def git_url = "git@github.com:dinghaoxiaoqin/onlinemanage.git"
 //镜像的版本号
 def tag = "latest"
 
-//阿里云镜像仓库地址
+//阿里云镜像仓库地址registry.cn-hangzhou.aliyuncs.com/onlinemanage/online
 def aliyun_url = "registry.cn-hangzhou.aliyuncs.com/onlinemanage/online"
 
 //阿里云镜像库名称
@@ -61,7 +61,7 @@ stage('编译 安装 公共模块'){
       //登录阿里云
      sh "docker login -u ${username} -p ${password} registry.cn-hangzhou.aliyuncs.com"
       //镜像上传到阿里云仓库
-     sh "docker push ${aliyun_url}/${aliyun_project}/${imageName}"
+     sh "docker push ${aliyun_url}/${imageName}"
 
      echo "镜像上传成功"
         }
