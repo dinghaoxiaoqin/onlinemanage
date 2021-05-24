@@ -61,7 +61,7 @@ stage('编译 安装 公共模块'){
       //登录阿里云
      sh "docker login -u ${username} -p ${password} registry.cn-hangzhou.aliyuncs.com"
       //镜像上传到阿里云仓库
-     sh "docker push ${aliyun_url}/${imageName}"
+     sh "docker push ${aliyun_url}/${aliyun_project}/${imageName}"
 
      echo "镜像上传成功"
         }
