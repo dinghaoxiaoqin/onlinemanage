@@ -55,13 +55,13 @@ stage('编译 安装 公共模块'){
      boot_name = name
 
      //定义镜像的名字
-     sh "docker tag ${imageName} ${aliyun_url}/${imageName}"
+     sh "docker tag ${imageName} ${aliyun_url}/${aliyun_project}/${imageName}"
      //推送镜像到阿里云
      withCredentials([usernamePassword(credentialsId: "${aliyun_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
       //登录阿里云
      sh "docker login -u ${username} -p ${password} registry.cn-hangzhou.aliyuncs.com"
       //镜像上传到阿里云仓库
-     sh "docker push ${aliyun_url}/${imageName}"
+     sh "docker push ${aliyun_url}/${aliyun_project}/${imageName}"
 
      echo "镜像上传成功"
         }
