@@ -17,6 +17,12 @@ def aliyun_auth = "e4b21adc-9795-4cdb-a14c-c765a3a00a98"
 //构建的微服务名称
 def boot_name = ""
 node {
+
+  stage('删除老的镜像'){
+     sh "/var/opt/oldDeploy.sh"
+     echo "删除镜像成功"
+   }
+
   stage('拉取代码'){
      checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: "${git_auth}", url: "${git_url}"]]])
   }
